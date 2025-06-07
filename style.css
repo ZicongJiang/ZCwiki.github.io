@@ -1,87 +1,95 @@
-/* reset & layout */
+/* ========== 全局 & 布局 ========== */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 body {
   display: flex;
-  font-family: "Helvetica Neue", Arial, sans-serif;
   height: 100vh;
+  font-family: 'Roboto', sans-serif;
+  background: #f0f2f5;
   color: #333;
-  background: #fff;
 }
 
-/* 侧边栏 */
+/* ========== 侧边栏 ========== */
 #sidebar {
-  width: 260px;
-  background: #fafafa;
+  width: 280px;
+  background: #ffffff;
   border-right: 1px solid #e0e0e0;
   overflow-y: auto;
   padding: 1.5rem;
+  box-shadow: 2px 0 5px rgba(0,0,0,0.03);
 }
 #sidebar h2 {
-  font-size: 1.4rem;
+  font-size: 1.5rem;
   margin-bottom: 1rem;
-  color: #111;
+  font-weight: 500;
 }
 
-/* 折叠面板 (Accordion) */
-details {
-  margin-bottom: 0.5rem;
+/* ========== 手风琴项 ========== */
+.accordion-item + .accordion-item {
+  margin-top: 0.5rem;
 }
-summary {
-  list-style: none;           /* 去掉默认箭头 */
-  cursor: pointer;            /* 手型指针 */
-  font-size: 1.1rem;          /* 一级标题字体 */
-  font-weight: 600;
-  padding: 0.4rem 0;
-  position: relative;
-  transition: color 0.2s;
-}
-summary:hover {
-  color: #007acc;
-}
-
-/* 自定义箭头 */
-summary::before {
-  content: "▶";
-  position: absolute;
-  left: -1.2rem;
-  top: 0.4rem;
-  transition: transform 0.2s;
-  font-size: 0.9rem;
-}
-summary[open]::before {
-  content: "▼";
-}
-
-/* 子菜单列表 */
-details ul {
-  list-style: none;
-  margin: 0.3rem 0 0.8rem 1.2rem;
-  padding-left: 0;
-}
-details li {
-  margin: 0.3rem 0;
-}
-details a {
-  text-decoration: none;
-  color: #333;
-  font-size: 0.95rem;     /* 二级项稍小 */
+.accordion-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   cursor: pointer;
-  transition: color 0.2s;
+  padding: 0.6rem 0.8rem;
+  background: #fafafa;
+  border-radius: 4px;
+  transition: background 0.2s;
+  font-weight: 500;
+  font-size: 1.1rem;
 }
-details a:hover {
-  color: #007acc;
-  text-decoration: underline;
+.accordion-header:hover {
+  background: #f0f0f0;
+}
+.accordion-header .arrow {
+  transition: transform 0.3s;
+  font-size: 0.9rem;
+  color: #888;
+}
+.accordion-header.expanded .arrow {
+  transform: rotate(90deg);
+  color: #555;
 }
 
-/* 主体内容区域 */
+/* ========== 子菜单 ========== */
+.submenu {
+  overflow: hidden;
+  max-height: 0;
+  transition: max-height 0.35s ease;
+  margin-left: 1rem;
+}
+.submenu.open {
+  /* 足够放下所有子项，高度可调 */
+  max-height: 500px;
+}
+.submenu li {
+  list-style: none;
+}
+.submenu li + li {
+  margin-top: 0.3rem;
+}
+.submenu a {
+  display: block;
+  padding: 0.4rem 0;
+  text-decoration: none;
+  color: #444;
+  font-size: 0.95rem;
+  transition: color 0.2s;
+}
+.submenu a:hover, .submenu a.active {
+  color: #007acc;
+}
+
+/* ========== 主体内容区 ========== */
 #content {
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
-  line-height: 1.6;
 }
 #content iframe {
   width: 100%;
   height: 90vh;
   border: none;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
 }

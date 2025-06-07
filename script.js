@@ -1,4 +1,4 @@
-// 动态生成 Accordion 目录
+// 动态生成手风琴菜单
 async function buildMenu() {
   const res = await fetch('menu.json');
   if (!res.ok) {
@@ -9,49 +9,51 @@ async function buildMenu() {
   const container = document.getElementById('menu');
 
   for (const [category, items] of Object.entries(menu)) {
-    // 创建 <details> 折叠面板
-    const details = document.createElement('details');
+    const item = document.createElement('div');
+    item.className = 'accordion-item';
 
-    // 默认让第一个分类展开（可选）
-    // if (Object.keys(menu)[0] === category) details.open = true;
+    // header
+    const header = document.createElement('div');
+    header.className = 'accordion-header';
+    header.innerHTML = `<span>${category}</span><span class="arrow">▶</span>`;
+    item.appendChild(header);
 
-    // 分类标题
-    const summary = document.createElement('summary');
-    summary.textContent = category;
-    details.appendChild(summary);
-
-    // 子菜单列表
-    const ulSub = document.createElement('ul');
+    // 子菜单
+    const ul = document.createElement('ul');
+    ul.className = 'submenu';
     for (const [label, path] of Object.entries(items)) {
       const li = document.createElement('li');
       const a = document.createElement('a');
       a.textContent = label;
+      a.href = '#';
       a.addEventListener('click', e => {
         e.preventDefault();
         loadContent(path);
-        // 点击后高亮当前项
-        document.querySelectorAll('#menu a').forEach(x => x.classList.remove('active'));
+        // 高亮当前
+        container.querySelectorAll('a').forEach(x => x.classList.remove('active'));
         a.classList.add('active');
       });
       li.appendChild(a);
-      ulSub.appendChild(li);
+      ul.appendChild(li);
     }
-    details.appendChild(ulSub);
-    container.appendChild(details);
+    item.appendChild(ul);
+    container.appendChild(item);
+
+    // 手风琴切换逻辑
+    header.addEventListener('click', () => {
+      const expanded = header.classList.toggle('expanded');
+      ul.classList.toggle('open', expanded);
+    });
   }
 }
 
-// 加载对应内容：Markdown 渲染或 PDF/HTML 嵌入
+// 加载内容：Markdown 渲染或 PDF/HTML 嵌入
 async function loadContent(path) {
   const contentEl = document.getElementById('content');
-
-  // 检测 PDF / HTML 文件
   if (/.pdf$/i.test(path) || /.html?$/i.test(path)) {
     contentEl.innerHTML = `<iframe src="${path}"></iframe>`;
     return;
   }
-
-  // Markdown 渲染
   const res = await fetch(path);
   if (!res.ok) {
     contentEl.innerHTML = `<p style="color:red">加载失败：${path}</p>`;
@@ -61,7 +63,4 @@ async function loadContent(path) {
   contentEl.innerHTML = marked.parse(md);
 }
 
-// 初始化
-document.addEventListener('DOMContentLoaded', () => {
-  buildMenu();
-});
+document.addEventListener('DOMContentLoaded', buildMenu);
